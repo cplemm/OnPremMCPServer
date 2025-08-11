@@ -1,0 +1,16 @@
+
+# Build output directories
+**/bin/
+**/obj/
+**/out/
+.vscode/
+.DS_Store
+*.user
+*.suo
+*.log
+app/agent/appsettings.json
+app/server/appsettings.json
+app/mcpserver/appsettings.json
+app/client/appsettings.json
+app/webclient/appsettings.json
+.azure

@@ -1,0 +1,10 @@
+[
+  {
+    "MachineName": "foo",
+    "State": "off"
+  },
+  {
+    "MachineName": "bar",
+    "State": "on"
+  }
+]

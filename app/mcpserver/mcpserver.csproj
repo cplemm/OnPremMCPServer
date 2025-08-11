@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>b1d983c0-0ebc-4879-bc3f-f4885ac8e3e9</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.Relay" Version="3.0.1" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.3" />
+  </ItemGroup>
+
+</Project>
