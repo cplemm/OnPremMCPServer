@@ -42,63 +42,111 @@ An ASP.NET Core web application that provides a chat interface for interacting w
 
 A simple console application that connects to the MCP server and provides natural language interaction with machine management tools. Built with Microsoft Semantic Kernel and Azure OpenAI, this client acts as an AI agent that can understand conversational commands like "start machine foo" or "check the status of machine 'bar'" and translate them into appropriate tool executions. Features automatic MCP tool discovery, context-aware conversations, and seamless integration with Azure OpenAI services.
 
-## 🚀 Quick Start
+## 🚀 Getting Started 
+The fastest way to get started with this repo is spinning the environment up in GitHub Codespaces, as it will set up everything for you autgomatically. You can also [set it up locally](#local-environment).
 
-### Prerequisites
-- .NET 9.0 SDK
-- Azure subscription with:
-  - Azure OpenAI service
-  - Azure Service Bus (for Relay)
-- Docker (optional, for containerized deployment)
+### GitHub Codespaces
+Open a web-based VS Code tab in your browser:
 
-### 1. Infrastructure Setup
-```bash
-# Deploy Azure resources using Bicep templates
-az deployment group create --resource-group <rg-name> --template-file infra/main.bicep
+[![Open in GitHub Codespaces](https://img.shields.io/static/v1?style=for-the-badge&label=GitHub+Codespaces&message=Open&color=brightgreen&logo=github)](https://github.com/codespaces/new?template_repository=cplemm/OnPremMCPServer)
+
+Continue with the [deployment](#deployment).
+
+### Local Environment
+1. Install the required tools:
+    - [Azure Developer CLI](https://aka.ms/azure-dev/install)
+    - [.NET 9.0](https://dotnet.microsoft.com/download/dotnet/9.0)
+2. Clone this repo:
+```bash  
+git clone https://github.com/cplemm/OnPremMCPServer.git
 ```
 
-### 2. Configuration
-Copy the example configuration files and update with your Azure service endpoints:
-```bash
-# Configure each component
-cp app/client/appsettings.example.json app/client/appsettings.json
-cp app/mcpserver/appsettings.example.json app/mcpserver/appsettings.json
-cp app/server/appsettings.example.json app/server/appsettings.json
-cp app/webclient/appsettings.example.json app/webclient/appsettings.json
-```
+## 🌐 Deployment
 
-### 3. Local Development
-```bash
-# Start the on-premises server (simulates machines behind firewall)
-cd app/server && dotnet run
+### Deploy Azure Services
 
-# Start the MCP server (cloud component)
-cd app/mcpserver && dotnet run --urls=http://localhost:5000
-
-# Try the console client
-cd app/client && dotnet run
-
-# Or start the web client
-cd app/webclient && dotnet run --urls=http://localhost:5001
-```
-
-## 🌐 Cloud Deployment
-
-All components are ready for Azure deployment:
-
-- **MCP Server**: Deploy to Azure Container Apps with ingress limited to the Container Apps Environment
-- **Web Client**: Deploy to Azure Container Apps with external ingress  
-- **On-Premises Server**: Run locally or in private networks with outbound connectivity
-
-See individual component README files for detailed deployment instructions.
-
-## 🔧 Infrastructure as Code
-
-The `infra/` directory contains Bicep templates for deploying the required Azure resources:
+The steps below will provision the following major Azure resources via Bicep templates:
 - Azure Container Registry for hosting container images
 - Azure Container Apps Environment for running cloud components
+- Azure Container Apps for the MCP Server and the Web Client
 - Azure Service Bus Relay for secure hybrid connectivity
+- Azure Open AI Instance for the LLM model endpoint
 - Log Analytics workspace for monitoring
+
+Enter the following commands inside a terminal in the root directory of the repo. 
+
+1. Login to your Azure account:
+
+    ```shell
+    azd auth login
+    ```
+
+    For GitHub Codespaces users, if the previous command fails, try:
+
+   ```shell
+    azd auth login --use-device-code
+    ```
+
+2. Create a new azd environment:
+
+    ```shell
+    azd env new
+    ```
+
+    Enter a name that will be used for the resource group.
+    This will create a new `.azure` folder and set it as the active environment for any calls to `azd` going forward.
+   
+3. Start provisioning of the Azure resources:
+
+    ```shell
+    azd provision
+    ```
+
+    You will have to select your subscription and an Azure region, and specify a name for the target resource group (rgName).
+
+4. Wait for the provisioning process to complete.
+5. Optional: you can test the app & function locally before deploying them to Azure:
+   
+     - Server
+       - Copy the example configuration files and update the settings with your Azure relay settings:
+         - In the ./app/server folder, create a copy of the ```appsettings.example.json``` file and name it ```appsettings.json```.
+         - Fill in all required configuration values => you can find them in the Azure Portal in the Azure Relay service you have provisioned above.
+         - Open a terminal window and navigate to the server directory (```cd ./app/server```)
+         - Start the MCP Server locally by running ```dotnet run```
+         - The server will connect to the Azure Relay Hybrid Connection endpoint and listen for messages from the MCP Server.
+     - MCP Server
+       - Copy the example configuration files and update the settings with your Azure relay settings:
+         - In the ./app/mcpserver folder, create a copy of the ```appsettings.example.json``` file and name it ```appsettings.json```.
+         - Fill in all required configuration values => you can find them in the Azure Portal in the Azure Relay service you have provisioned above.
+         - Open a terminal window and navigate to the mcpserver directory (```cd ./app/mcpserver```)
+         - Start the MCP Server locally by running ```dotnet run --urls=http://localhost:5000```
+         - The server will listen on http://localhost:5000.
+         - You can use the MCP Inspector to test the server, or continue with the client or web client (see below).
+     - Web Client
+         - In the ./app/webclient folder, create a copy of the ```appsettings.example.json``` file and name it ```appsettings.json```.
+         - Fill the required configuration values for the MCP Server (http://localhost:5000) and Azure OpenAI => again, find these values in the Azure Portal. 
+         - Open a NEW terminal window and navigate to the Client directory (```cd ./app/webclient```)
+         - Start the web app locally by running ```dotnet run --urls=http://localhost:5001```
+         - Open the browser with http://localhost:5001 and test the app.
+
+### Deploy Web App & MCP Server
+
+1.  The statement below will provision (a) the Web App for the chat UI and (b) the MCP Server, both into Azure Container Apps into the same Container Environment.
+   
+    ```shell
+    azd deploy
+    ```
+
+2. Wait for the deployment process to complete.
+3. (You can also combine the provisioning & deployment steps above in a single go using ```azd up```).  
+
+## Clean up
+
+1.  To clean up all the resources created by this sample run the following statement, which will delete all resources, incl. the resource group.
+
+    ```shell
+    azd down --purge
+    ```
 
 ## 🔒 Security Features
 
