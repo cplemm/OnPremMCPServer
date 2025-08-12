@@ -44,6 +44,9 @@ module relayNamespace 'br/public:avm/res/relay/namespace:0.7.2' = {
 
 resource relay 'Microsoft.Relay/namespaces@2024-01-01' existing = {
   name: 'relay-${resourceToken}'
+  dependsOn: [
+    relayNamespace
+  ]
 }
 
 resource rootRule 'Microsoft.Relay/namespaces/authorizationRules@2024-01-01' existing = {
@@ -216,6 +219,9 @@ module webclientFetchLatestImage './modules/fetch-container-image.bicep' = {
 
 resource openai 'Microsoft.CognitiveServices/accounts@2025-06-01' existing = {
   name: '${abbrs.cognitiveServicesAccounts}${resourceToken}'
+  dependsOn: [
+    csAccount
+  ]
 }
 
 module webclient 'br/public:avm/res/app/container-app:0.8.0' = {
