@@ -105,7 +105,7 @@ Enter the following commands inside a terminal in the root directory of the repo
     You will have to select your subscription and an Azure region, and specify a name for the target resource group (rgName).
 
 4. Wait for the provisioning process to complete.
-5. Optional: you can test the app & function locally before deploying them to Azure:
+5. Optional: you can test the app & function locally before deploying them to Azure. 
    
      - Server
        - Copy the example configuration files and update the settings with your Azure relay settings:
@@ -139,6 +139,16 @@ Enter the following commands inside a terminal in the root directory of the repo
 
 2. Wait for the deployment process to complete.
 3. (You can also combine the provisioning & deployment steps above in a single go using ```azd up```).  
+4. After deployment, you will have to manually set the container images for the Web Client and MCP Server in the Azure Portal:
+   - Go to the Azure Portal and navigate to the Container Apps Environment you have created.
+   - Select the Web Client app and go to the "Containers" tab.
+     - Select the container image  from the registry in the resource group that has 'webclient' in its name.
+     - Select the image tag that has been built by the `azd deploy` statement above.
+     - Save your changes as a new revision.
+   - Select the MCP Server app and go to the "Containers" tab.
+     - Select the container image  from the registry in the resource group that has 'mcpserver' in its name.
+     - Select the image tag that has been built by the `azd deploy` statement above.
+     - Save your changes as a new revision.
 
 ## Clean up
 
