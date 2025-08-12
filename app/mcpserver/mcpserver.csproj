@@ -11,5 +11,10 @@
     <PackageReference Include="Microsoft.Azure.Relay" Version="3.0.1" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.3" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
 
 </Project>
