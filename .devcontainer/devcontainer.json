@@ -22,7 +22,7 @@
       ]
     }
   },
-  "postCreateCommand": "dotnet restore ./app/client/client.csproj && dotnet restore ./app/mcpserver/mcpserver.csproj && dotnet restore ./app/server/server.csproj && dotnet restore ./app/webclient/webclient.csproj",
+  "postCreateCommand": "dotnet restore ./app/client/client.csproj && dotnet restore ./app/mcpserver/mcpserver.csproj && dotnet restore ./app/server/Server.csproj && dotnet restore ./app/webclient/webclient.csproj",
   "forwardPorts": [5000, 5001],
   "remoteUser": "vscode"
 }
